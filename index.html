@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PajakPas - Pelacak Pajak Kendaraan Indonesia</title>
+  <meta name="description" content="PajakPas membantu pemilik kendaraan Indonesia melacak masa berlaku STNK dan pembayaran pajak tahunan. Pindai dokumen dengan OCR bertenaga AI, dapatkan pengingat, dan jangan pernah lewat tenggat waktu.">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+      color: #212121;
+      background: #FFFFFF;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+      color: white;
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .nav-brand img { width: 40px; height: 40px; border-radius: 10px; }
+    .nav-brand span { font-size: 1.4rem; font-weight: 700; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: white; }
+
+    .lang-toggle {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .lang-toggle:hover { background: rgba(255,255,255,0.3); }
+
+    .hero {
+      background: linear-gradient(135deg, #4A90E2 0%, #357ABD 50%, #2a6cb5 100%);
+      color: white;
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .hero-content { max-width: 700px; margin: 0 auto; }
+
+    .hero img {
+      width: 120px;
+      height: 120px;
+      border-radius: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 32px;
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-badges {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .features {
+      padding: 80px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 48px;
+      color: #212121;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+
+    .feature-card {
+      padding: 32px;
+      border-radius: 16px;
+      background: #F8F9FA;
+      border: 1px solid #E0E0E0;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .feature-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1.2rem; margin-bottom: 8px; color: #212121; }
+    .feature-card p { color: #666; font-size: 0.95rem; }
+
+    .cta {
+      background: #F5F7FA;
+      padding: 64px 24px;
+      text-align: center;
+    }
+
+    .cta h2 { font-size: 1.8rem; margin-bottom: 12px; }
+    .cta p { color: #666; margin-bottom: 32px; font-size: 1.1rem; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #4A90E2;
+      color: white;
+      padding: 14px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: #357ABD; }
+
+    footer {
+      background: #212121;
+      color: rgba(255,255,255,0.7);
+      padding: 48px 24px;
+    }
+
+    .footer-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .footer-brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .footer-brand span { font-size: 1.2rem; font-weight: 700; }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: white; }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    .lang-id [data-lang="en"] { display: none !important; }
+    .lang-en [data-lang="id"] { display: none !important; }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+      .nav-links { display: none; }
+      .features h2 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body class="lang-id">
+
+  <header>
+    <nav class="nav">
+      <a href="/" class="nav-brand">
+        <img src="assets/logo.png" alt="PajakPas">
+        <span>PajakPas</span>
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="#features" data-lang="id">Fitur</a><a href="#features" data-lang="en">Features</a></li>
+          <li><a href="privacy-policy.html" data-lang="id">Kebijakan Privasi</a><a href="privacy-policy.html" data-lang="en">Privacy Policy</a></li>
+          <li><a href="delete-account.html" data-lang="id">Hapus Akun</a><a href="delete-account.html" data-lang="en">Delete Account</a></li>
+        </ul>
+        <button class="lang-toggle" onclick="toggleLang()"><svg width="20" height="14" viewBox="0 0 60 40" style="vertical-align:middle;margin-right:4px"><rect width="60" height="40" fill="#012169"/><path d="M0,0L60,40M60,0L0,40" stroke="#fff" stroke-width="7"/><path d="M0,0L60,40M60,0L0,40" stroke="#C8102E" stroke-width="4"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="12"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="7"/></svg> EN</button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <img src="assets/logo.png" alt="PajakPas Logo">
+      <h1>PajakPas</h1>
+      <p data-lang="id">Lacak pajak kendaraan dan masa berlaku STNK dengan mudah. Pindai dokumen, dapatkan pengingat, dan jangan pernah lewat tenggat waktu.</p>
+      <p data-lang="en">Track your vehicle tax and STNK validity with ease. Scan documents, get reminders, and never miss a deadline.</p>
+      <div class="hero-badges">
+        <span class="badge" data-lang="id">&#128203; Lacak STNK</span>
+        <span class="badge" data-lang="id">&#128270; OCR Bertenaga AI</span>
+        <span class="badge" data-lang="id">&#128276; Pengingat Cerdas</span>
+        <span class="badge" data-lang="en">&#128203; STNK Tracking</span>
+        <span class="badge" data-lang="en">&#128270; AI-Powered OCR</span>
+        <span class="badge" data-lang="en">&#128276; Smart Reminders</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <h2 data-lang="id">Semua yang Anda butuhkan untuk mengelola pajak kendaraan</h2>
+    <h2 data-lang="en">Everything you need to manage vehicle taxes</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#128247;</div>
+        <h3 data-lang="id">Pindai Dokumen</h3>
+        <h3 data-lang="en">Scan Documents</h3>
+        <p data-lang="id">Arahkan kamera ke STNK atau slip pajak SSPD Anda dan biarkan AI mengekstrak semua detail secara otomatis.</p>
+        <p data-lang="en">Point your camera at your STNK or SSPD tax slip and let AI extract all the details automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128276;</div>
+        <h3 data-lang="id">Jangan Lewatkan Tenggat Waktu</h3>
+        <h3 data-lang="en">Never Miss a Deadline</h3>
+        <p data-lang="id">Dapatkan notifikasi cerdas sebelum pajak atau STNK Anda kedaluwarsa. Sesuaikan kapan dan seberapa sering Anda diingatkan.</p>
+        <p data-lang="en">Get smart notifications before your tax or STNK expires. Customize when and how often you're reminded.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128202;</div>
+        <h3 data-lang="id">Lacak Semua Kendaraan</h3>
+        <h3 data-lang="en">Track All Vehicles</h3>
+        <p data-lang="id">Kelola beberapa motor dan mobil dalam satu tempat. Lihat status pajak sekilas dengan badge berwarna.</p>
+        <p data-lang="en">Manage multiple motorcycles and cars in one place. See tax status at a glance with color-coded badges.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128274;</div>
+        <h3 data-lang="id">Aman &amp; Privat</h3>
+        <h3 data-lang="en">Secure &amp; Private</h3>
+        <p data-lang="id">Data Anda dienkripsi saat transit dan disimpan dengan aman. Hanya Anda yang dapat mengakses informasi kendaraan Anda.</p>
+        <p data-lang="en">Your data is encrypted in transit and stored securely. Only you can access your vehicle information.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#127760;</div>
+        <h3 data-lang="id">Dukungan Dwibahasa</h3>
+        <h3 data-lang="en">Bilingual Support</h3>
+        <p data-lang="id">Tersedia dalam Bahasa Indonesia dan Inggris. Ganti bahasa kapan saja dari pengaturan.</p>
+        <p data-lang="en">Available in both Bahasa Indonesia and English. Switch languages anytime from settings.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#127769;</div>
+        <h3 data-lang="id">Mode Gelap</h3>
+        <h3 data-lang="en">Dark Mode</h3>
+        <p data-lang="id">Nyaman di mata dengan dukungan mode gelap penuh. Menyesuaikan tema perangkat Anda secara otomatis.</p>
+        <p data-lang="en">Easy on the eyes with full dark mode support. Matches your device theme automatically.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2 data-lang="id">Dapatkan PajakPas</h2>
+    <h2 data-lang="en">Get PajakPas</h2>
+    <p data-lang="id">Tersedia di Android. Mulai lacak pajak kendaraan Anda hari ini.</p>
+    <p data-lang="en">Available on Android. Start tracking your vehicle taxes today.</p>
+    <a href="https://play.google.com/store/apps/details?id=com.robguer.pajakpas" class="btn">
+      <span data-lang="id">&#9654; Dapatkan di Google Play</span>
+      <span data-lang="en">&#9654; Get it on Google Play</span>
+    </a>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div>
+        <div class="footer-brand">
+          <img src="assets/logo.png" alt="PajakPas">
+          <span>PajakPas</span>
+        </div>
+        <p style="max-width: 300px; font-size: 0.9rem;" data-lang="id">Pelacakan pajak kendaraan yang mudah untuk pemilik kendaraan Indonesia.</p>
+        <p style="max-width: 300px; font-size: 0.9rem;" data-lang="en">Vehicle tax tracking made simple for Indonesian vehicle owners.</p>
+      </div>
+      <div>
+        <h4 style="color: white; margin-bottom: 12px;" data-lang="id">Hukum</h4>
+        <h4 style="color: white; margin-bottom: 12px;" data-lang="en">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="privacy-policy.html" data-lang="id">Kebijakan Privasi</a><a href="privacy-policy.html" data-lang="en">Privacy Policy</a></li>
+          <li><a href="delete-account.html" data-lang="id">Hapus Akun</a><a href="delete-account.html" data-lang="en">Delete Account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color: white; margin-bottom: 12px;" data-lang="id">Kontak</h4>
+        <h4 style="color: white; margin-bottom: 12px;" data-lang="en">Contact</h4>
+        <ul class="footer-links">
+          <li><a href="mailto:support@pajakpas.com">support@pajakpas.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 PajakPas. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    var enSvg = '<svg width="20" height="14" viewBox="0 0 60 40" style="vertical-align:middle;margin-right:4px"><rect width="60" height="40" fill="#012169"/><path d="M0,0L60,40M60,0L0,40" stroke="#fff" stroke-width="7"/><path d="M0,0L60,40M60,0L0,40" stroke="#C8102E" stroke-width="4"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="12"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="7"/></svg> EN';
+    var idSvg = '<svg width="20" height="14" viewBox="0 0 3 2" style="vertical-align:middle;margin-right:4px"><rect width="3" height="1" fill="#CE1126"/><rect y="1" width="3" height="1" fill="#fff"/></svg> ID';
+
+    var currentLang = localStorage.getItem('pajakpas-lang') || 'id';
+    document.documentElement.lang = currentLang;
+    document.body.className = 'lang-' + currentLang;
+    document.querySelector('.lang-toggle').innerHTML = currentLang === 'id' ? enSvg : idSvg;
+
+    function toggleLang() {
+      currentLang = currentLang === 'id' ? 'en' : 'id';
+      localStorage.setItem('pajakpas-lang', currentLang);
+      document.documentElement.lang = currentLang;
+      document.body.className = 'lang-' + currentLang;
+      document.querySelector('.lang-toggle').innerHTML = currentLang === 'id' ? enSvg : idSvg;
+    }
+  </script>
+
+</body>
+</html>

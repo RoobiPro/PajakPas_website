@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hapus Akun - PajakPas</title>
+  <meta name="description" content="Hapus akun PajakPas Anda dan semua data terkait.">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+      color: #212121;
+      background: #FFFFFF;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+      color: white;
+      padding: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .nav {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .nav-brand img { width: 36px; height: 36px; border-radius: 8px; }
+    .nav-brand span { font-size: 1.3rem; font-weight: 700; }
+
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+
+    .nav a.back {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .nav a.back:hover { color: white; }
+
+    .lang-toggle {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .lang-toggle:hover { background: rgba(255,255,255,0.3); }
+
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    h1 { font-size: 2rem; margin-bottom: 8px; color: #EF5350; }
+    .subtitle { color: #666; font-size: 1.05rem; margin-bottom: 40px; }
+    h2 { font-size: 1.3rem; margin-top: 36px; margin-bottom: 12px; color: #212121; }
+    p { margin-bottom: 16px; color: #444; }
+
+    .delete-form-container {
+      background: #FFF8F8;
+      border: 2px solid #FFCDD2;
+      border-radius: 16px;
+      padding: 32px;
+      margin: 24px 0;
+    }
+
+    .delete-form-container h3 { color: #EF5350; margin-bottom: 16px; font-size: 1.15rem; }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #333;
+      font-size: 0.95rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #4A90E2;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+    }
+
+    .btn-delete {
+      background: #EF5350;
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .btn-delete:hover { background: #D32F2F; }
+    .btn-delete:disabled { background: #BDBDBD; cursor: not-allowed; }
+
+    .status-msg {
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .status-msg.error { display: block; background: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+    .status-msg.success { display: block; background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+    .status-msg.loading { display: block; background: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB; }
+
+    .divider { border: none; border-top: 2px solid #E0E0E0; margin: 40px 0; }
+
+    .steps {
+      background: #F8F9FA;
+      border: 1px solid #E0E0E0;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 24px 0;
+    }
+
+    .step { display: flex; gap: 16px; margin-bottom: 20px; }
+    .step:last-child { margin-bottom: 0; }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: #4A90E2;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .step-content h3 { font-size: 1rem; margin-bottom: 4px; }
+    .step-content p { margin-bottom: 0; font-size: 0.95rem; color: #666; }
+
+    .warning {
+      background: #FFF3E0;
+      border-left: 4px solid #FFA726;
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 24px 0;
+    }
+
+    .warning strong { color: #E65100; }
+
+    .data-list { list-style: none; padding: 0; margin: 12px 0; }
+
+    .data-list li {
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+      color: #444;
+    }
+
+    .data-list li::before {
+      content: "\2022";
+      color: #EF5350;
+      font-weight: bold;
+      position: absolute;
+      left: 8px;
+    }
+
+    .contact {
+      background: #E3F2FD;
+      padding: 20px 24px;
+      border-radius: 12px;
+      margin-top: 32px;
+    }
+
+    .contact a { color: #4A90E2; font-weight: 600; }
+
+    footer {
+      background: #212121;
+      color: rgba(255,255,255,0.6);
+      padding: 24px;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+    footer a:hover { color: white; }
+
+    .lang-id [data-lang="en"] { display: none !important; }
+    .lang-en [data-lang="id"] { display: none !important; }
+  </style>
+</head>
+<body class="lang-id">
+
+  <header>
+    <nav class="nav">
+      <a href="/" class="nav-brand">
+        <img src="assets/logo.png" alt="PajakPas">
+        <span>PajakPas</span>
+      </a>
+      <div class="nav-right">
+        <a href="/" class="back" data-lang="id">&larr; Beranda</a>
+        <a href="/" class="back" data-lang="en">&larr; Back to Home</a>
+        <button class="lang-toggle" onclick="toggleLang()"><svg width="20" height="14" viewBox="0 0 60 40" style="vertical-align:middle;margin-right:4px"><rect width="60" height="40" fill="#012169"/><path d="M0,0L60,40M60,0L0,40" stroke="#fff" stroke-width="7"/><path d="M0,0L60,40M60,0L0,40" stroke="#C8102E" stroke-width="4"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="12"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="7"/></svg> EN</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1 data-lang="id">Hapus Akun Anda</h1>
+    <h1 data-lang="en">Delete Your Account</h1>
+    <p class="subtitle" data-lang="id">Hapus akun PajakPas Anda dan semua data terkait secara permanen.</p>
+    <p class="subtitle" data-lang="en">Permanently delete your PajakPas account and all associated data.</p>
+
+    <div class="delete-form-container">
+      <h3 data-lang="id">Hapus Akun Otomatis</h3>
+      <h3 data-lang="en">Delete Account Automatically</h3>
+      <p data-lang="id" style="font-size:0.95rem;">Masuk dengan akun Anda untuk menghapus semua data secara langsung.</p>
+      <p data-lang="en" style="font-size:0.95rem;">Sign in with your account to delete all your data instantly.</p>
+
+      <form id="deleteForm" onsubmit="handleDelete(event)">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" required placeholder="email@contoh.com">
+        </div>
+        <div class="form-group">
+          <label data-lang="id" for="password">Kata Sandi</label>
+          <label data-lang="en" for="password">Password</label>
+          <input type="password" id="password" required>
+        </div>
+        <div class="form-group">
+          <label data-lang="id">Ketik <strong>HAPUS</strong> untuk konfirmasi</label>
+          <label data-lang="en">Type <strong>DELETE</strong> to confirm</label>
+          <input type="text" id="confirm" required autocomplete="off">
+        </div>
+        <button type="submit" class="btn-delete" id="deleteBtn">
+          <span data-lang="id">Hapus Akun Saya</span>
+          <span data-lang="en">Delete My Account</span>
+        </button>
+      </form>
+
+      <div id="statusMsg" class="status-msg"></div>
+    </div>
+
+    <hr class="divider">
+
+    <h2 data-lang="id">Atau hapus melalui aplikasi</h2>
+    <h2 data-lang="en">Or delete via the app</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3 data-lang="id">Buka aplikasi PajakPas</h3>
+          <h3 data-lang="en">Open the PajakPas app</h3>
+          <p data-lang="id">Buka aplikasi dan pastikan Anda sudah masuk ke akun Anda.</p>
+          <p data-lang="en">Launch the app and make sure you are signed in to your account.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3 data-lang="id">Buka Profil</h3>
+          <h3 data-lang="en">Go to Profile</h3>
+          <p data-lang="id">Ketuk tab <strong>Profil</strong> di bilah navigasi bawah.</p>
+          <p data-lang="en">Tap the <strong>Profile</strong> tab in the bottom navigation bar.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3 data-lang="id">Ketuk "Hapus Akun"</h3>
+          <h3 data-lang="en">Tap "Delete Account"</h3>
+          <p data-lang="id">Gulir ke bawah untuk menemukan opsi <strong>Hapus Akun</strong> di bagian Data.</p>
+          <p data-lang="en">Scroll down to find the <strong>Delete Account</strong> option in the Data section.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h3 data-lang="id">Konfirmasi penghapusan</h3>
+          <h3 data-lang="en">Confirm deletion</h3>
+          <p data-lang="id">Ketik <strong>DELETE</strong> di kolom konfirmasi dan ketuk <strong>Hapus Selamanya</strong>.</p>
+          <p data-lang="en">Type <strong>DELETE</strong> in the confirmation field and tap <strong>Delete Forever</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning">
+      <strong data-lang="id">Peringatan:</strong>
+      <strong data-lang="en">Warning:</strong>
+      <span data-lang="id"> Penghapusan akun bersifat permanen dan tidak dapat dibatalkan.</span>
+      <span data-lang="en"> Account deletion is permanent and cannot be undone.</span>
+    </div>
+
+    <h2 data-lang="id">Data yang dihapus</h2>
+    <h2 data-lang="en">What data is deleted</h2>
+    <p data-lang="id">Ketika Anda menghapus akun, data berikut akan dihapus secara permanen:</p>
+    <p data-lang="en">When you delete your account, the following data is permanently removed:</p>
+    <ul class="data-list">
+      <li data-lang="id">Profil pengguna Anda (nama, email, nomor telepon)</li>
+      <li data-lang="en">Your user profile (name, email, phone number)</li>
+      <li data-lang="id">Semua kendaraan terdaftar dan detailnya</li>
+      <li data-lang="en">All registered vehicles and their details</li>
+      <li data-lang="id">Semua catatan dan riwayat pembayaran pajak</li>
+      <li data-lang="en">All tax payment records and history</li>
+      <li data-lang="id">Semua pengaturan dan jadwal notifikasi</li>
+      <li data-lang="en">All notification settings and schedules</li>
+      <li data-lang="id">Kredensial autentikasi Anda</li>
+      <li data-lang="en">Your authentication credentials</li>
+    </ul>
+
+    <h2 data-lang="id">Penyimpanan data</h2>
+    <h2 data-lang="en">Data retention</h2>
+    <p data-lang="id">Semua data dihapus segera setelah penghapusan akun. Tidak ada masa pemulihan — setelah dihapus, data Anda tidak dapat dipulihkan.</p>
+    <p data-lang="en">All data is deleted immediately upon account deletion. There is no recovery period — once deleted, your data cannot be restored.</p>
+
+    <div class="contact">
+      <p style="margin-bottom: 0;">
+        <strong data-lang="id">Butuh bantuan?</strong>
+        <strong data-lang="en">Need help?</strong>
+        <span data-lang="id"> Hubungi kami di <a href="mailto:support@pajakpas.com">support@pajakpas.com</a> dan kami akan memproses permintaan Anda dalam 48 jam.</span>
+        <span data-lang="en"> Contact us at <a href="mailto:support@pajakpas.com">support@pajakpas.com</a> and we will process your request within 48 hours.</span>
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 PajakPas &middot; <a href="privacy-policy.html" data-lang="id">Kebijakan Privasi</a><a href="privacy-policy.html" data-lang="en">Privacy Policy</a> &middot; <a href="/" data-lang="id">Beranda</a><a href="/" data-lang="en">Home</a></p>
+  </footer>
+
+  <script>
+    var enSvg = '<svg width="20" height="14" viewBox="0 0 60 40" style="vertical-align:middle;margin-right:4px"><rect width="60" height="40" fill="#012169"/><path d="M0,0L60,40M60,0L0,40" stroke="#fff" stroke-width="7"/><path d="M0,0L60,40M60,0L0,40" stroke="#C8102E" stroke-width="4"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="12"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="7"/></svg> EN';
+    var idSvg = '<svg width="20" height="14" viewBox="0 0 3 2" style="vertical-align:middle;margin-right:4px"><rect width="3" height="1" fill="#CE1126"/><rect y="1" width="3" height="1" fill="#fff"/></svg> ID';
+
+    var currentLang = localStorage.getItem('pajakpas-lang') || 'id';
+    document.documentElement.lang = currentLang;
+    document.body.className = 'lang-' + currentLang;
+    document.querySelector('.lang-toggle').innerHTML = currentLang === 'id' ? enSvg : idSvg;
+
+    function toggleLang() {
+      currentLang = currentLang === 'id' ? 'en' : 'id';
+      localStorage.setItem('pajakpas-lang', currentLang);
+      document.documentElement.lang = currentLang;
+      document.body.className = 'lang-' + currentLang;
+      document.querySelector('.lang-toggle').innerHTML = currentLang === 'id' ? enSvg : idSvg;
+    }
+
+    // Supabase
+    var SUPABASE_URL = 'https://ffdjhhixlbpuvtvikqbd.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmZGpoaGl4bGJwdXZ0dmlrcWJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcxMDk5MjgsImV4cCI6MjA4MjY4NTkyOH0._r5MqDLccAuf8zRVLWoJ6epFRN-jicF-0Vch7ltjPTI';
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function showStatus(type, msgId, msgEn) {
+      var el = document.getElementById('statusMsg');
+      el.className = 'status-msg ' + type;
+      el.textContent = currentLang === 'id' ? msgId : msgEn;
+    }
+
+    async function handleDelete(e) {
+      e.preventDefault();
+
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+      var confirm = document.getElementById('confirm').value.trim().toUpperCase();
+      var btn = document.getElementById('deleteBtn');
+
+      if (confirm !== 'HAPUS' && confirm !== 'DELETE') {
+        showStatus('error',
+          'Ketik HAPUS atau DELETE untuk konfirmasi.',
+          'Type DELETE or HAPUS to confirm.'
+        );
+        return;
+      }
+
+      btn.disabled = true;
+      showStatus('loading', 'Sedang masuk...', 'Signing in...');
+
+      try {
+        // 1. Sign in
+        var result = await sb.auth.signInWithPassword({ email: email, password: password });
+        if (result.error) throw new Error(result.error.message);
+
+        var userId = result.data.user.id;
+
+        showStatus('loading', 'Menghapus data kendaraan dan pajak...', 'Deleting vehicle and tax data...');
+
+        // 2. Delete vehicles (cascade deletes tax payments and notifications)
+        await sb.from('vehicles_new').delete().eq('user_id', userId);
+
+        // 3. Delete user profile
+        await sb.from('users').delete().eq('id', userId);
+
+        showStatus('loading', 'Menghapus akun...', 'Deleting account...');
+
+        // 4. Delete auth user via RPC
+        await sb.rpc('delete_user_account');
+
+        // 5. Sign out
+        await sb.auth.signOut();
+
+        showStatus('success',
+          'Akun Anda telah dihapus secara permanen. Semua data telah dihapus.',
+          'Your account has been permanently deleted. All data has been removed.'
+        );
+
+        document.getElementById('deleteForm').style.opacity = '0.5';
+        document.getElementById('deleteForm').style.pointerEvents = 'none';
+
+      } catch (err) {
+        showStatus('error',
+          'Gagal: ' + err.message,
+          'Failed: ' + err.message
+        );
+        btn.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+</html>
