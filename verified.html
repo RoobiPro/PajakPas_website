@@ -132,20 +132,26 @@
     }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      display: inline-block;
       background: #4A90E2;
       color: white;
-      padding: 14px 32px;
+      padding: 14px 36px;
       border-radius: 12px;
-      text-decoration: none;
+      border: none;
+      font-family: inherit;
       font-weight: 600;
       font-size: 1.05rem;
+      cursor: pointer;
       transition: background 0.2s;
+      margin-bottom: 16px;
     }
 
     .btn:hover { background: #357ABD; }
+
+    .hint {
+      color: #999;
+      font-size: 0.9rem;
+    }
 
     footer {
       background: #212121;
@@ -187,13 +193,15 @@
 
     <h1 data-lang="id">Email Terverifikasi!</h1>
     <h1 data-lang="en">Email Verified!</h1>
-    <p class="subtitle" data-lang="id">Alamat email Anda telah berhasil diverifikasi. Anda sekarang dapat kembali ke aplikasi dan masuk ke akun Anda.</p>
-    <p class="subtitle" data-lang="en">Your email address has been successfully verified. You can now return to the app and sign in to your account.</p>
+    <p class="subtitle" data-lang="id">Email Anda telah berhasil diverifikasi. Anda sekarang dapat masuk ke akun PajakPas Anda.</p>
+    <p class="subtitle" data-lang="en">Your email has been verified successfully. You can now sign in to your PajakPas account.</p>
 
-    <a href="https://play.google.com/store/apps/details?id=com.robguer.pajakpas" class="btn">
-      <span data-lang="id">Buka Aplikasi PajakPas</span>
-      <span data-lang="en">Open PajakPas App</span>
-    </a>
+    <button class="btn" onclick="openApp()">
+      <span data-lang="id">Buka PajakPas</span>
+      <span data-lang="en">Open PajakPas</span>
+    </button>
+    <p class="hint" data-lang="id">Jika aplikasi tidak terbuka, kembali ke PajakPas dan masuk dengan email dan kata sandi Anda.</p>
+    <p class="hint" data-lang="en">If the app doesn't open, go back to PajakPas and sign in with your email and password.</p>
   </main>
 
   <footer>
@@ -215,6 +223,10 @@
       document.documentElement.lang = currentLang;
       document.body.className = 'lang-' + currentLang;
       document.querySelector('.lang-toggle').innerHTML = currentLang === 'id' ? enSvg : idSvg;
+    }
+
+    function openApp() {
+      window.location.href = 'pajakpas://auth/login';
     }
   </script>
 
