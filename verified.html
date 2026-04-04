@@ -45,10 +45,15 @@
       flex-direction: column;
     }
 
+    html { scroll-behavior: smooth; }
+
     header {
       background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
       color: white;
       padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
@@ -69,8 +74,8 @@
       color: white;
     }
 
-    .nav-brand img { width: 36px; height: 36px; border-radius: 8px; }
-    .nav-brand span { font-size: 1.3rem; font-weight: 700; }
+    .nav-brand img { width: 40px; height: 40px; border-radius: 10px; }
+    .nav-brand span { font-size: 1.4rem; font-weight: 700; }
 
     .nav-right { display: flex; align-items: center; gap: 24px; }
 
@@ -83,12 +88,15 @@
     .nav-links a {
       color: rgba(255,255,255,0.9);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 500;
       transition: color 0.2s;
     }
 
     .nav-links a:hover { color: white; }
+    .nav-links a.active { color: white; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid rgba(255,255,255,0.8); outline-offset: 3px; border-radius: 3px; }
 
     .lang-toggle {
       background: rgba(255,255,255,0.2);
@@ -241,6 +249,12 @@
       document.body.className = 'lang-' + currentLang;
       document.querySelector('.lang-toggle').innerHTML = currentLang === 'id' ? enSvg : idSvg;
     }
+
+    // Highlight active nav link
+    var path = window.location.pathname.replace(/\/$/, '');
+    document.querySelectorAll('.nav-links a').forEach(function(a) {
+      if (a.getAttribute('href') === path) a.classList.add('active');
+    });
 
     function openApp() {
       var hash = window.location.hash;
