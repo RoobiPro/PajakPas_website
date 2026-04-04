@@ -69,15 +69,23 @@
     .nav-brand img { width: 36px; height: 36px; border-radius: 8px; }
     .nav-brand span { font-size: 1.3rem; font-weight: 700; }
 
-    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-right { display: flex; align-items: center; gap: 24px; }
 
-    .nav a.back {
-      color: rgba(255,255,255,0.9);
-      text-decoration: none;
-      font-size: 0.95rem;
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
     }
 
-    .nav a.back:hover { color: white; }
+    .nav-links a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: white; }
 
     .lang-toggle {
       background: rgba(255,255,255,0.2);
@@ -162,6 +170,7 @@
       h1 { font-size: 1.6rem; }
       table { font-size: 0.85rem; }
       th, td { padding: 8px 10px; }
+      .nav-links { display: none; }
     }
   </style>
 </head>
@@ -174,8 +183,11 @@
         <span>PajakPas</span>
       </a>
       <div class="nav-right">
-        <a href="/" class="back" data-lang="id">&larr; Beranda</a>
-        <a href="/" class="back" data-lang="en">&larr; Back to Home</a>
+        <ul class="nav-links">
+          <li><a href="/privacy-policy" data-lang="id">Kebijakan Privasi</a><a href="/privacy-policy" data-lang="en">Privacy Policy</a></li>
+          <li><a href="/terms" data-lang="id">Syarat Layanan</a><a href="/terms" data-lang="en">Terms of Service</a></li>
+          <li><a href="/delete-account" data-lang="id">Hapus Akun</a><a href="/delete-account" data-lang="en">Delete Account</a></li>
+        </ul>
         <button class="lang-toggle" onclick="toggleLang()"><svg width="20" height="14" viewBox="0 0 60 40" style="vertical-align:middle;margin-right:4px"><rect width="60" height="40" fill="#012169"/><path d="M0,0L60,40M60,0L0,40" stroke="#fff" stroke-width="7"/><path d="M0,0L60,40M60,0L0,40" stroke="#C8102E" stroke-width="4"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="12"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="7"/></svg> EN</button>
       </div>
     </nav>
